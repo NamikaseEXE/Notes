@@ -1,19 +1,23 @@
 'use client'
-import React, { useState }  from 'react'
+import React, { useState, useRef }  from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotes } from '@/context/NoteContext'
 
 export default function NoteForm() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const titleRef = useRef<HTMLInputElement>(null);
   const { createNote } = useNotes();
   return (
-    <form action="" onSubmit={async (e) => {
+    <form onSubmit={async (e) => {
         e.preventDefault()
         await createNote({
             title,
             content
-        })
+        });
+        setTitle('');
+        setContent('');
+        titleRef.current ?. focus();
     }}>
 
         <input type="text" name="title" autoFocus placeholder='title'
@@ -21,6 +25,7 @@ export default function NoteForm() {
         focus:ring-2 focus:ring-blue-600 my-2'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        ref={titleRef}
         />
 
         <textarea name="content" placeholder='content'

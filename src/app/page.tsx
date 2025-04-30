@@ -2,14 +2,13 @@
 import NoteForm from '@/components/NoteForm';
 import { useNotes } from '@/context/NoteContext'
 import { useEffect } from 'react';
-import NotedCard from '@/components/NotedCard'
+import NoteCard from '@/components/NoteCard'
 
 
 
 export default function HomePage() {
   const { notes, loadNotes } = useNotes();
 
-  console.log(notes);
   useEffect(() => {
     loadNotes()
   }, [])
@@ -18,7 +17,7 @@ export default function HomePage() {
       <div>
         <NoteForm />
         {notes.map((note) => (
-          <NotedCard note={note} key= {note.id}/>
+          <NoteCard note={note} key= {note.id}/>
         ))}
       </div>
     </div>
