@@ -1,25 +1,23 @@
 'use client'
 import { createContext, useContext, useState } from "react";
-
-interface Note {
-    title: string,
-    content: string
-}
+import { Note, CreateNote } from '@/interfaces/Note'
 
 export const NoteContext = createContext<{
     notes: Note[];
     loadNotes: () => Promise<void>;
-    createNote: (note:Note) => Promise<void>;
+    createNote: (note: CreateNote) => Promise<void>;
+    deleteNote: (id: string) => Promise<void>;
 }>({
     notes: [],
     loadNotes: async () => { },
-    createNote: async (note: Note) => {}
+    createNote: async (note: CreateNote) => { },
+    deleteNote: async (id: string) => { }
 });
 
 export const useNotes = () => {
     const context = useContext(NoteContext)
     if (!context) {
-        throw new Error ('useNotes must be used within a NotesProvider')
+        throw new Error('useNotes must be used within a NotesProvider')
     }
     return context
 }
@@ -31,7 +29,7 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
         const data = await res.json();
         setNotes(data);
     }
-    async function createNote(note: Note) {
+    async function createNote(note: CreateNote) {
         const res = await fetch("api/notes", {
             method: "POST",
             headers: {
@@ -40,10 +38,17 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
             body: JSON.stringify(note),
         })
         const newNote = await res.json();
-        setNotes([...notes,newNote])
+        setNotes([...notes, newNote])
+    }
+    async function deleteNote(id: string) {
+        const res = await fetch('http://localhost:3000/api/notes/' + id, {
+            method: 'DELETE',
+        })
+        const data = await res.json();
+        setNotes(notes.filter((note) => note.id != id))
     }
     return (
-        <NoteContext.Provider value={{ notes, loadNotes, createNote }}>
+        <NoteContext.Provider value={{ notes, loadNotes, createNote, deleteNote }}>
             {children}
         </NoteContext.Provider>
     )

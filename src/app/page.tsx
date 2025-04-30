@@ -2,13 +2,13 @@
 import NoteForm from '@/components/NoteForm';
 import { useNotes } from '@/context/NoteContext'
 import { useEffect } from 'react';
+import NotedCard from '@/components/NotedCard'
 
 
 
 export default function HomePage() {
-  // const notes = await loadNotes();
   const { notes, loadNotes } = useNotes();
-  
+
   console.log(notes);
   useEffect(() => {
     loadNotes()
@@ -17,11 +17,8 @@ export default function HomePage() {
     <div className="flex items-center justify-center h-screen">
       <div>
         <NoteForm />
-        {notes.map((note: any) => (
-          <div key={note.id} className='bg-slate-400 p-4 m-2'>
-            <h2>{note.title}</h2>
-            <p>{note.content}</p>
-          </div>
+        {notes.map((note) => (
+          <NotedCard note={note} key= {note.id}/>
         ))}
       </div>
     </div>
