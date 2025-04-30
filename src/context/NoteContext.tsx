@@ -1,23 +1,49 @@
 'use client'
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+
+interface Note {
+    title: string,
+    content: string
+}
 
 export const NoteContext = createContext<{
-    notes: any[];
+    notes: Note[];
     loadNotes: () => Promise<void>;
+    createNote: (note:Note) => Promise<void>;
 }>({
     notes: [],
-    loadNotes: async () => {}
+    loadNotes: async () => { },
+    createNote: async (note: Note) => {}
 });
 
+export const useNotes = () => {
+    const context = useContext(NoteContext)
+    if (!context) {
+        throw new Error ('useNotes must be used within a NotesProvider')
+    }
+    return context
+}
+
 export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
-    const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState<Note[]>([]);
     async function loadNotes() {
         const res = await fetch("/api/notes");
         const data = await res.json();
         setNotes(data);
     }
+    async function createNote(note: Note) {
+        const res = await fetch("api/notes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(note),
+        })
+        const newNote = await res.json();
+        setNotes([...notes,newNote])
+    }
     return (
-        <NoteContext.Provider value={{ notes, loadNotes }}>
+        <NoteContext.Provider value={{ notes, loadNotes, createNote }}>
             {children}
         </NoteContext.Provider>
     )

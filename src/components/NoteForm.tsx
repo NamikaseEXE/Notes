@@ -1,26 +1,19 @@
 'use client'
-import React from 'react'
-import { useState } from 'react'
+import React, { useState }  from 'react'
 import { useRouter } from 'next/navigation'
+import { useNotes } from '@/context/NoteContext'
 
 export default function NoteForm() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const router = useRouter();
+  const { createNote } = useNotes();
   return (
     <form action="" onSubmit={async (e) => {
         e.preventDefault()
-        const res = await fetch("api/notes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ title, content }),
+        await createNote({
+            title,
+            content
         })
-        const data = await res.json();
-        console.log(data);
-        setTitle('');
-        setContent('');
     }}>
 
         <input type="text" name="title" autoFocus placeholder='title'

@@ -1,13 +1,14 @@
 'use client'
 import NoteForm from '@/components/NoteForm';
-import { NoteContext } from '@/context/NoteContext'
-import { useContext, useEffect } from 'react';
+import { useNotes } from '@/context/NoteContext'
+import { useEffect } from 'react';
 
 
 
 export default function HomePage() {
   // const notes = await loadNotes();
-  const { notes, loadNotes } = useContext(NoteContext)
+  const { notes, loadNotes } = useNotes();
+  
   console.log(notes);
   useEffect(() => {
     loadNotes()
