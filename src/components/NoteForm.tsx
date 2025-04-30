@@ -7,7 +7,7 @@ export default function NoteForm() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const titleRef = useRef<HTMLInputElement>(null);
-  const { createNote, selectedNote, setSelectedNote } = useNotes();
+  const { createNote, selectedNote, setSelectedNote, updateNote } = useNotes();
   useEffect(() => {
     if (selectedNote) {
       setTitle(selectedNote.title);
@@ -17,12 +17,20 @@ export default function NoteForm() {
   return (
     <form onSubmit={async (e) => {
       e.preventDefault()
-      await createNote({
-        title,
-        content
-      });
+      if (selectedNote) {
+        await updateNote(selectedNote.id, {
+          title,
+          content
+        })
+      } else {
+        await createNote({
+          title,
+          content
+        });
+      }
       setTitle('');
       setContent('');
+      setSelectedNote(null);
       titleRef.current?.focus();
     }}>
 
@@ -44,7 +52,9 @@ export default function NoteForm() {
       <div className='flex justify-end gap-x-2'>
         <button type="submit" className='px-5 py-2 text-white bg-blue-600 rounded-md
         hover:bg-blue-700'>
-          Save
+          {
+            selectedNote ? 'Update' : 'Create'
+          }
         </button>
         {
           selectedNote && (
