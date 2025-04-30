@@ -3,7 +3,7 @@ import { Note } from '@/generated/prisma/client'
 import { useNotes } from '@/context/NoteContext'
 
 export default function NoteCard({ note }: { note: Note }) {
-    const { deleteNote } = useNotes();
+    const { deleteNote, setSelectedNote } = useNotes();
     return (
         <div key={note.id} className='bg-slate-400 p-4 m-2 flex justify-between'>
             <div>
@@ -16,7 +16,9 @@ export default function NoteCard({ note }: { note: Note }) {
                         await deleteNote(Number(note.id))
                     }
                 }}>Delete</button>
-                <button>Edit</button>
+                <button
+                    onClick={() => setSelectedNote(note)}>Edit
+                </button>
             </div>
         </div>
     )
